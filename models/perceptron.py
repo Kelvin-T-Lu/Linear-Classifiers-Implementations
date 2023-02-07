@@ -21,6 +21,8 @@ class Perceptron:
     def train(self, X_train: np.ndarray, y_train: np.ndarray):
         """Train the classifier.
 
+        # https://www.python-engineer.com/courses/mlfromscratch/06_perceptron/
+        # https://medium.com/hackernoon/implementing-the-perceptron-algorithm-from-scratch-in-python-48be2d07b1c0
         Use the perceptron update rule as introduced in the Lecture.
 
         Parameters:
