@@ -23,6 +23,13 @@ class Perceptron:
 
         # https://www.python-engineer.com/courses/mlfromscratch/06_perceptron/
         # https://medium.com/hackernoon/implementing-the-perceptron-algorithm-from-scratch-in-python-48be2d07b1c0
+
+        # Multiclass perceptron
+        # https://swayattadaw.medium.com/multiclass-perceptron-from-scratch-ed326fc34b8f
+        # https://www.codingame.com/playgrounds/9487/deep-learning-from-scratch---theory-and-implementation/perceptrons
+        # https://www.kaggle.com/code/alizahidraja/multiclass-perceptron
+        # https://jermwatt.github.io/machine_learning_refined/notes/7_Linear_multiclass_classification/7_3_Perceptron.html
+        # https://www.youtube.com/watch?v=EA627DC7k6M
         Use the perceptron update rule as introduced in the Lecture.
 
         Parameters:
@@ -32,6 +39,33 @@ class Perceptron:
         """
         # TODO: implement me
 
+
+        # Weights - (Num_Classes, D)
+            # Rows - The weight vector for each class
+            # Column - The weight w.r.t. feature columns. 
+        self.w = np.zeros((self.n_class, X_train.shape[1]))
+      
+        # * Concept Updates
+        #     if wrong:  
+        #         w_pred -= class
+        #         w_correct += class 
+
+        for _ in range(self.epochs):
+
+            for index, data_row in enumerate(X_train):
+                # data_row = (1, D)
+                # weights = (Num_Classes, D)
+
+                y_pred = np.argmax(np.dot(data_row, self.w.T))
+
+                # y_pred = 1
+                y_correct = y_train[index]
+                if y_pred != y_correct: # Wrong prediction
+                    self.w[y_pred] -= np.dot(self.lr, data_row) # Update incorrect prediction w/ learnign rate.
+                    self.w[y_correct] += np.dot(self.lr, data_row) # Update correct prediciton w/ learning rate.
+
+
+            
         pass
 
     def predict(self, X_test: np.ndarray) -> np.ndarray:
@@ -48,4 +82,13 @@ class Perceptron:
         """
         # TODO: implement me
 
-        return
+        # X_test - (N, D)
+        # Weights - (num_classes, D)
+
+        X_test_weights = np.dot(X_test, self.w.T)
+
+        y_pred = [np.argmax(data_row) for data_row in X_test_weights]
+
+        print(y_pred[:5])
+        
+        return np.array(y_pred)
