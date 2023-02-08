@@ -37,35 +37,34 @@ class Perceptron:
                 N examples with D dimensions
             y_train: a numpy array of shape (N,) containing training labels
         """
-        # TODO: implement me
-
 
         # Weights - (Num_Classes, D)
             # Rows - The weight vector for each class
             # Column - The weight w.r.t. feature columns. 
         self.w = np.zeros((self.n_class, X_train.shape[1]))
       
+        self.init_lr = self.lr
         # * Concept Updates
         #     if wrong:  
         #         w_pred -= class
         #         w_correct += class 
 
-        for _ in range(self.epochs):
+        for epoch_num in range(self.epochs):
 
             for index, data_row in enumerate(X_train):
                 # data_row = (1, D)
                 # weights = (Num_Classes, D)
-
                 y_pred = np.argmax(np.dot(data_row, self.w.T))
-
+                
                 # y_pred = 1
                 y_correct = y_train[index]
+                # print(f"Y_pred - {y_pred}, y_correct - {y_correct}")
                 if y_pred != y_correct: # Wrong prediction
                     self.w[y_pred] -= np.dot(self.lr, data_row) # Update incorrect prediction w/ learnign rate.
                     self.w[y_correct] += np.dot(self.lr, data_row) # Update correct prediciton w/ learning rate.
-
-
             
+            # learning rate decay
+            self.lr = (1/ (1 + epoch_num)) * self.init_lr
         pass
 
     def predict(self, X_test: np.ndarray) -> np.ndarray:
@@ -89,6 +88,5 @@ class Perceptron:
 
         y_pred = [np.argmax(data_row) for data_row in X_test_weights]
 
-        print(y_pred[:5])
         
         return np.array(y_pred)
