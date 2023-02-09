@@ -43,6 +43,8 @@ class SVM:
 
         Hint: operate on mini-batches of data for SGD.
 
+        # https://ljvmiranda921.github.io/notebook/2017/02/11/multiclass-svm/
+
         Parameters:
             X_train: a numpy array of shape (N, D) containing training data;
                 N examples with D dimensions
