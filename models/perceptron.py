@@ -1,6 +1,6 @@
 """Perceptron model."""
 
-import numpy as np
+import cupy as np
 
 
 from operator import add, sub
@@ -43,6 +43,7 @@ class Perceptron:
             # Column - The weight w.r.t. feature columns. 
         self.w = np.zeros((self.n_class, X_train.shape[1]))
       
+        X_train = np.asarray(X_train)  # Converting to Cupy's NDArray
         self.init_lr = self.lr
         # * Concept Updates
         #     if wrong:  
@@ -50,7 +51,7 @@ class Perceptron:
         #         w_correct += class 
 
         for epoch_num in range(self.epochs):
-
+            
             for index, data_row in enumerate(X_train):
                 # data_row = (1, D)
                 # weights = (Num_Classes, D)
@@ -60,8 +61,8 @@ class Perceptron:
                 y_correct = y_train[index]
                 # print(f"Y_pred - {y_pred}, y_correct - {y_correct}")
                 if y_pred != y_correct: # Wrong prediction
-                    self.w[y_pred] -= np.dot(self.lr, data_row) # Update incorrect prediction w/ learnign rate.
-                    self.w[y_correct] += np.dot(self.lr, data_row) # Update correct prediciton w/ learning rate.
+                    self.w[y_pred] -= self.lr * data_row # Update incorrect prediction w/ learnign rate.
+                    self.w[y_correct] += self.lr * data_row # Update correct prediciton w/ learning rate.
             
             # learning rate decay
             self.lr = (1/ (1 + epoch_num)) * self.init_lr
@@ -79,7 +80,6 @@ class Perceptron:
                 length N, where each element is an integer giving the predicted
                 class.
         """
-        # TODO: implement me
 
         # X_test - (N, D)
         # Weights - (num_classes, D)
