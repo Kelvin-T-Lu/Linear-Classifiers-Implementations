@@ -3,8 +3,8 @@
 {
 	"name": "Python 3",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	// "image": "mcr.microsoft.com/devcontainers/python:0-3.11",
-	"image": "rapidsai/rapidsai-nightly:cuda11.8-runtime-ubuntu20.04-py3.10",
+	"image": "mcr.microsoft.com/devcontainers/python:0-3.11",
+	// "image": "rapidsai/rapidsai-nightly:cuda11.8-runtime-ubuntu20.04-py3.10",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
@@ -12,13 +12,13 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "pip3 install --user -r requirements.txt",
+	"postCreateCommand": "pip3 install --user -r requirements.txt",
 
 
-	"runArgs": [
-		"--gpus",
-		"all"
-	],
+	// "runArgs": [
+		// "--gpus",
+		// "all"
+	// ],
 	// Configure tool-specific properties.
 	"customizations": {
 		// Configure properties specific to VS Code.
