@@ -1,6 +1,6 @@
 """Perceptron model."""
 
-import cupy as np
+import numpy as np
 
 
 from operator import add, sub
@@ -42,8 +42,12 @@ class Perceptron:
             # Rows - The weight vector for each class
             # Column - The weight w.r.t. feature columns. 
         self.w = np.zeros((self.n_class, X_train.shape[1]))
+
+        # Adding bias row. 
+        bias = np.ones((1, X_train.shape[1]))
+        self.w = np.vstack((self.w,bias)) # Adding bias column.
       
-        X_train = np.asarray(X_train)  # Converting to Cupy's NDArray
+        # X_train = np.asarray(X_train)  # Converting to Cupy's NDArray
         self.init_lr = self.lr
         # * Concept Updates
         #     if wrong:  
