@@ -41,7 +41,7 @@ class Perceptron:
         # Weights - (Num_Classes, D)
             # Rows - The weight vector for each class
             # Column - The weight w.r.t. feature columns. 
-        self.w = np.zeros((self.n_class, X_train.shape[1]))
+        self.w = np.random.rand(self.n_class, X_train.shape[1]) * 0.0001
 
         # TODO - Adding bias row. 
         bias = np.ones((self.n_class, 1))

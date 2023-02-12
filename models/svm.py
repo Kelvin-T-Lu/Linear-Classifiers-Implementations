@@ -50,6 +50,8 @@ class SVM:
         # https://cs231n.github.io/linear-classify/
         # https://towardsdatascience.com/svm-implementation-from-scratch-python-2db2fc52e5c2 
         # https://github.com/qandeelabbassi/python-svm-sgd/blob/master/svm.py
+        # https://github.com/amanchadha/stanford-cs231n-assignments-2020/tree/master/assignment1/cs231n/classifiers
+        # https://github.com/ibayramli/Multiclass-SVM-Image-Classifier
 
         Parameters:
             X_train: a numpy array of shape (N, D) containing training data;
@@ -62,9 +64,9 @@ class SVM:
         # Weights - (Num_Classes, D)
         # Rows - The weight vector for each class
         # Column - The weight w.r.t. feature columns.
-        self.w = np.zeros((self.n_class, X_train.shape[1]))
+        self.w = np.random.rand(self.n_class, X_train.shape[1]) * 0.0001
 
-        X_train = np.asarray(X_train)  # Converting to Cupy's NDArray
+        # X_train = np.asarray(X_train)  # Converting to Cupy's NDArray
 
         for _ in range(self.epochs):
             for index, data_row in enumerate(X_train):
