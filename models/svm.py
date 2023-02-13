@@ -98,12 +98,10 @@ class SVM:
                 N examples with D dimensions
             y_train: a numpy array of shape (N,) containing training labels
         """
-        # TODO: implement me
-
-        # Weights - (Num_Classes, D)
-        # Rows - The weight vector for each class
-        # Column - The weight w.r.t. feature columns.
-        self.w = np.random.rand(self.n_class, X_train.shape[1]) * 0.0001
+        # self.w - (Num_Classes, Feature_Cols)
+            # Rows - The weight vector for each class
+            # Column - The weight w.r.t. feature columns.
+        self.w = np.random.rand(self.n_class, X_train.shape[1]) * 0.0005
 
         # Add bias row.
         bias = np.ones((self.n_class, 1))
@@ -114,13 +112,14 @@ class SVM:
 
         # Gradient descent with batches. 
         for i in range(self.epochs):
-            mask_indicies = np.random.choice(X_train.shape[0], batch_size, replace = True)
 
+            # Selecting batches. 
+            mask_indicies = np.random.choice(X_train.shape[0], batch_size, replace = True)
             X_batch, y_batch = X_train[mask_indicies], y_train[mask_indicies]
 
-            gradient, loss = self.calc_gradient(X_batch, y_batch).T
-
-            self.w -= self.lr * gradient
+            # Gradiant descent. 
+            gradient, loss = self.calc_gradient(X_batch, y_batch)
+            self.w -= self.lr * gradient.T 
 
             # Option to report hinge loss.
             if verbose:  

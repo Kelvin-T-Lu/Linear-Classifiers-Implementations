@@ -37,32 +37,30 @@ class Softmax:
         # TODO: implement me
         W = self.w.T
         reg = self.reg_const
-        X = X_train
-        y = y_train
         loss = 0
         dW = np.zeros_like(W)
 
         num_classes = W.shape[1]
-        num_train = X.shape[0]
+        num_train = X_train.shape[0]
         for i in range(num_train):
-            scores = X[i].dot(W) # scores.shape is N x C
+            scores = X_train[i].dot(W) # scores.shape is N x C
 
             # shift values for 'scores' for numeric reasons (over-flow cautious)
             scores -= scores.max()
 
             probs = np.exp(scores)/np.sum(np.exp(scores))
 
-            loss += -np.log(probs[y[i]])
+            loss += -np.log(probs[y_train[i]])
 
             # since dL(i)/df(k) = p(k) - 1 (if k = y[i]), where f is a vector of scores for the given example
             # i is the training sample and k is the class
             dscores = probs.reshape(1,-1)
-            dscores[:, y[i]] -= 1
+            dscores[:, y_train[i]] -= 1
 
             # since scores = X.dot(W), iget dW by multiplying X.T and dscores
             # W is D x C so dW should also match those dimensions
             # X.T x dscores = (D x 1) x (1 x C) = D x C
-            dW += np.dot(X[i].T.reshape(X[i].shape[0], 1), dscores)
+            dW += np.dot(X_train[i].T.reshape(X_train[i].shape[0], 1), dscores)
 
         # Right now the loss is a sum over all training examples, but we want it
         # to be an average instead so we divide by num_train.
@@ -70,12 +68,11 @@ class Softmax:
         dW /= num_train
 
         # Add regularization to the loss.
-        loss += reg * np.sum(W * W)
+        loss += reg * np.sum(np.square(W))
 
         # Add regularization loss to the gradient
         dW += 2 * reg * W    
 
-        # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
 
         return dW
         # return
@@ -94,7 +91,7 @@ class Softmax:
         # Weights - (Num_Classes, D)
         # Rows - The weight vector for each class
         # Column - The weight w.r.t. feature columns.
-        self.w = np.random.rand(self.n_class, X_train.shape[1]) * 0.0001
+        self.w = np.random.rand(self.n_class, X_train.shape[1]) * 0.0005
 
         # Add bias row.
         bias = np.ones((self.n_class, 1))
