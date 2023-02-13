@@ -14,7 +14,7 @@ class SVM:
             reg_const: the regularization constant
         """
         self.w = None  # TODO: change this
-        self.alpha = lr
+        self.lr = lr
         self.epochs = epochs
         self.reg_const = reg_const
         self.n_class = n_class
@@ -52,6 +52,7 @@ class SVM:
         # https://github.com/qandeelabbassi/python-svm-sgd/blob/master/svm.py
         # https://github.com/amanchadha/stanford-cs231n-assignments-2020/tree/master/assignment1/cs231n/classifiers
         # https://github.com/ibayramli/Multiclass-SVM-Image-Classifier
+        # https://users.cs.utah.edu/~zhe/pdf/lec-19-2-svm-sgd-upload.pdf
 
         Parameters:
             X_train: a numpy array of shape (N, D) containing training data;
@@ -82,6 +83,9 @@ class SVM:
                     self.w[y_pred] -= self.lr * data_row
                     # Update correct prediciton w/ learning rate.
                     self.w[y_correct] += self.lr * data_row
+                else: 
+                    # If correct, (1- lr(lambda/N)) * Wc
+                    self.w[y_pred] = (1 - (self.lr * (self.reg_const / X_train.shape[0]))) * self.w[y_pred]
 
         pass
 
@@ -98,4 +102,9 @@ class SVM:
                 class.
         """
         # TODO: implement me
-        return
+
+        X_test_weights = np.dot(X_test, self.w.T)
+
+        y_pred = [np.argmax(data_row) for data_row in X_test_weights]
+
+        return np.array(y_pred)
