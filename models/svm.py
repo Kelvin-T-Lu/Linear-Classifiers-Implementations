@@ -13,13 +13,13 @@ class SVM:
             epochs: the number of epochs to train for
             reg_const: the regularization constant
         """
-        self.w = None  # TODO: change this
+        self.w = None 
         self.lr = lr
         self.epochs = epochs
         self.reg_const = reg_const
         self.n_class = n_class
 
-    def calc_gradient(self, X: np.ndarray, y: np.ndarray) -> np.ndarray:
+    def calc_gradient(self, X_train: np.ndarray, y_train: np.ndarray) -> np.ndarray:
         """Calculate gradient of the svm hinge loss.
 
         Inputs have dimension D, there are C classes, and we operate on
@@ -35,56 +35,47 @@ class SVM:
             the gradient with respect to weights w; an array of the same shape
                 as w
         """
-        # TODO: implement me
-        # TODO - Refactor me
 
-        reg = self.reg_const
-        W = self.w.T
+        delta = 1 # Delta from CS231N Linear Classify
+        W = self.w.T # (Features, Class_label)
 
         dW = np.zeros(W.shape) # initialize the gradient as zero
 
         # compute the loss and the gradient
-        num_classes = W.shape[1]
-        num_train = X.shape[0]
-        loss = 0.0
-        for i in range(num_train):
-            scores = X[i].dot(W)
-            correct_class_score = scores[y[i]]
-            for j in range(num_classes):
-                if j == y[i]: # Classes match
+        hinge_loss = 0.0
+        
+        for row_index in range(X_train.shape[0]): # For each instance inside batch
+
+            scores = X_train[row_index].dot(W) # Calculated scores for class. 
+            correct_c_vector = scores[y_train[row_index]] # Scores for correct class
+
+            for class_label in range(self.n_class):
+                if class_label == y_train[row_index]: # Classes match, continue. 
                     continue
-                margin = scores[j] - correct_class_score + 1 # note delta = 1
-                if margin > 0:
-                    loss += margin
+                # max(0, class_score - predicted_scores + delta)
+                class_loss = scores[class_label] - correct_c_vector + delta # note delta = 1
+                if class_loss > 0:
+                    hinge_loss += class_loss
 
-                    # for incorrect classes (j != y[i]), gradient for class j is x * I(margin > 0) 
-                    # the transpose on the extracted input sample X[i] transforms it into a column vector
-                    # for dw[:, j]
-                    dW[:, j] += X[i].T
+                    # Gradiant w.r.t. to c != yi
+                    dW[:, class_label] += X_train[row_index].T
                 
-                    # for correct class (j = y[i]), gradient for class j is -x * I(margin > 0) 
-                    # the transpose on the extracted input sample X[i] transforms it into a column vector
-                    # for dw[:, j]
-                    dW[:, y[i]] += -X[i].T
+                    # Gradiant w.r.t. Wyi (Correct class)
+                    dW[:, y_train[row_index]] += -X_train[row_index].T
             
-        # Right now the loss is a sum over all training examples, but we want it
-        # to be an average instead so we divide by num_train.
-        loss /= num_train
-        dW /= num_train
+        # 1/N, for averages. 
+        hinge_loss /= X_train.shape[0]
+        dW /= X_train.shape[0]
 
-        # Add regularization to the loss.
-        loss += reg * np.sum(W * W)
-
+        # Regularization portion of equation (lambda * ||W||^2)
+        hinge_loss += self.reg_const * np.sum(np.square(W))
+        
         # Add regularization loss to the gradient
-        dW += 2 * reg * W
+        dW += 2 * self.reg_const * W
 
-        # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
-    
-        # return loss, dW
-        return dW
-        # print(scores.shape, correct_y_vectors.shape)
+        return dW, hinge_loss
 
-    def train(self, X_train: np.ndarray, y_train: np.ndarray, batch_size = 150):
+    def train(self, X_train: np.ndarray, y_train: np.ndarray, batch_size = 150, verbose = False):
         """Train the classifier.
 
         Hint: operate on mini-batches of data for SGD.
@@ -127,10 +118,14 @@ class SVM:
 
             X_batch, y_batch = X_train[mask_indicies], y_train[mask_indicies]
 
-            gradient = self.calc_gradient(X_batch, y_batch).T
+            gradient, loss = self.calc_gradient(X_batch, y_batch).T
 
             self.w -= self.lr * gradient
-        pass
+
+            # Option to report hinge loss.
+            if verbose:  
+                print(f"Epoch {i} Loss - {loss}")
+
 
     def predict(self, X_test: np.ndarray) -> np.ndarray:
         """Use the trained weights to predict labels for test data points.
@@ -144,10 +139,10 @@ class SVM:
                 length N, where each element is an integer giving the predicted
                 class.
         """
-        # TODO: implement me
         # Adding bias vector
         X_test = np.hstack((X_test, np.ones((X_test.shape[0], 1))))
 
+        # Predictions
         X_test_weights = np.dot(X_test, self.w.T)
 
         y_pred = [np.argmax(data_row) for data_row in X_test_weights]
