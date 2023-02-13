@@ -46,7 +46,6 @@ class Perceptron:
         # TODO - Adding bias row. 
         bias = np.ones((self.n_class, 1))
         self.w = np.hstack((self.w,bias)) # Adding bias column.
-
         x_train_bias = np.ones((X_train.shape[0], 1))
         X_train = np.hstack((X_train, x_train_bias))
         # X_train = np.asarray(X_train)  # Converting to Cupy's NDArray

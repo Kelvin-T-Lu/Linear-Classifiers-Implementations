@@ -67,6 +67,11 @@ class SVM:
         # Column - The weight w.r.t. feature columns.
         self.w = np.random.rand(self.n_class, X_train.shape[1]) * 0.0001
 
+        # Add bias row.
+        bias = np.ones((self.n_class, 1))
+        self.w = np.hstack((self.w, bias))  # Adding bias column.
+        x_train_bias = np.ones((X_train.shape[0], 1))
+        X_train = np.hstack((X_train, x_train_bias))
         # X_train = np.asarray(X_train)  # Converting to Cupy's NDArray
 
         for _ in range(self.epochs):
@@ -102,7 +107,9 @@ class SVM:
                 class.
         """
         # TODO: implement me
-
+        # Adding bias vector
+        X_test = np.hstack((X_test, np.ones((X_test.shape[0], 1))))
+        
         X_test_weights = np.dot(X_test, self.w.T)
 
         y_pred = [np.argmax(data_row) for data_row in X_test_weights]
