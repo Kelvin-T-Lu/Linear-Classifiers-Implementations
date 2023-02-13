@@ -39,7 +39,7 @@ class SVM:
         delta = 1 # Delta from CS231N Linear Classify
         W = self.w.T # (Features, Class_label)
 
-        dW = np.zeros(W.shape) # initialize the gradient as zero
+        dW = np.zeros(W.shape) # Intial gradient.
 
         # compute the loss and the gradient
         hinge_loss = 0.0
@@ -71,11 +71,11 @@ class SVM:
         hinge_loss += self.reg_const * np.sum(np.square(W))
         
         # Add regularization loss to the gradient
-        dW += 2 * self.reg_const * W
+        dW += self.reg_const * W
 
         return dW, hinge_loss
 
-    def train(self, X_train: np.ndarray, y_train: np.ndarray, batch_size = 150, verbose = False):
+    def train(self, X_train: np.ndarray, y_train: np.ndarray, batch_size = 150, loss_verbose = False):
         """Train the classifier.
 
         Hint: operate on mini-batches of data for SGD.
@@ -97,6 +97,8 @@ class SVM:
             X_train: a numpy array of shape (N, D) containing training data;
                 N examples with D dimensions
             y_train: a numpy array of shape (N,) containing training labels
+            batch_size(int): Size of batches for gradient descent calculation. 
+            loss_verbose(bool): Set to true to print hinge_loss for each epoch iteration.
         """
         # self.w - (Num_Classes, Feature_Cols)
             # Rows - The weight vector for each class
@@ -122,7 +124,7 @@ class SVM:
             self.w -= self.lr * gradient.T 
 
             # Option to report hinge loss.
-            if verbose:  
+            if loss_verbose:  
                 print(f"Epoch {i} Loss - {loss}")
 
 

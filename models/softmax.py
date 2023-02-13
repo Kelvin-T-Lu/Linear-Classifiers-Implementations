@@ -85,9 +85,10 @@ class Softmax:
         Parameters:
             X_train: a numpy array of shape (N, D) containing training data;
                 N examples with D dimensions
-            y_train: a numpy array of shape (N,) containing training labels
+            y_train: a numpy array of shape (N,) containing training labels.
+            batch_size(int): Size of batches for batch SGD.
         """
-        # TODO: implement me
+
         # Weights - (Num_Classes, D)
         # Rows - The weight vector for each class
         # Column - The weight w.r.t. feature columns.
