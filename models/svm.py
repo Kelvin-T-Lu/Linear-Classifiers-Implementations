@@ -52,7 +52,9 @@ class SVM:
         # https://github.com/qandeelabbassi/python-svm-sgd/blob/master/svm.py
         # https://github.com/amanchadha/stanford-cs231n-assignments-2020/tree/master/assignment1/cs231n/classifiers
         # https://github.com/ibayramli/Multiclass-SVM-Image-Classifier
+        # https://github.com/HuangYukun/columbia_cs_deep_learning_1/blob/master/ecbm4040/classifiers/linear_svm.py
         # https://users.cs.utah.edu/~zhe/pdf/lec-19-2-svm-sgd-upload.pdf
+        
 
         Parameters:
             X_train: a numpy array of shape (N, D) containing training data;
@@ -109,7 +111,7 @@ class SVM:
         # TODO: implement me
         # Adding bias vector
         X_test = np.hstack((X_test, np.ones((X_test.shape[0], 1))))
-        
+
         X_test_weights = np.dot(X_test, self.w.T)
 
         y_pred = [np.argmax(data_row) for data_row in X_test_weights]
