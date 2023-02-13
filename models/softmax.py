@@ -111,7 +111,6 @@ class Softmax:
 
             self.w -= self.lr * gradient
 
-            print(i)
         return
 
     def predict(self, X_test: np.ndarray) -> np.ndarray:
