@@ -19,7 +19,7 @@ class SVM:
         self.reg_const = reg_const
         self.n_class = n_class
 
-    def calc_gradient(self, X_train: np.ndarray, y_train: np.ndarray) -> np.ndarray:
+    def calc_gradient(self, X: np.ndarray, y: np.ndarray) -> np.ndarray:
         """Calculate gradient of the svm hinge loss.
 
         Inputs have dimension D, there are C classes, and we operate on
@@ -36,9 +36,55 @@ class SVM:
                 as w
         """
         # TODO: implement me
-        return
+        # TODO - Refactor me
 
-    def train(self, X_train: np.ndarray, y_train: np.ndarray):
+        reg = self.reg_const
+        W = self.w.T
+
+        dW = np.zeros(W.shape) # initialize the gradient as zero
+
+        # compute the loss and the gradient
+        num_classes = W.shape[1]
+        num_train = X.shape[0]
+        loss = 0.0
+        for i in range(num_train):
+            scores = X[i].dot(W)
+            correct_class_score = scores[y[i]]
+            for j in range(num_classes):
+                if j == y[i]: # Classes match
+                    continue
+                margin = scores[j] - correct_class_score + 1 # note delta = 1
+                if margin > 0:
+                    loss += margin
+
+                    # for incorrect classes (j != y[i]), gradient for class j is x * I(margin > 0) 
+                    # the transpose on the extracted input sample X[i] transforms it into a column vector
+                    # for dw[:, j]
+                    dW[:, j] += X[i].T
+                
+                    # for correct class (j = y[i]), gradient for class j is -x * I(margin > 0) 
+                    # the transpose on the extracted input sample X[i] transforms it into a column vector
+                    # for dw[:, j]
+                    dW[:, y[i]] += -X[i].T
+            
+        # Right now the loss is a sum over all training examples, but we want it
+        # to be an average instead so we divide by num_train.
+        loss /= num_train
+        dW /= num_train
+
+        # Add regularization to the loss.
+        loss += reg * np.sum(W * W)
+
+        # Add regularization loss to the gradient
+        dW += 2 * reg * W
+
+        # *****END OF YOUR CODE (DO NOT DELETE/MODIFY THIS LINE)*****
+    
+        # return loss, dW
+        return dW
+        # print(scores.shape, correct_y_vectors.shape)
+
+    def train(self, X_train: np.ndarray, y_train: np.ndarray, batch_size = 150):
         """Train the classifier.
 
         Hint: operate on mini-batches of data for SGD.
@@ -62,7 +108,6 @@ class SVM:
             y_train: a numpy array of shape (N,) containing training labels
         """
         # TODO: implement me
-        # ? Add bias function
 
         # Weights - (Num_Classes, D)
         # Rows - The weight vector for each class
@@ -76,24 +121,15 @@ class SVM:
         X_train = np.hstack((X_train, x_train_bias))
         # X_train = np.asarray(X_train)  # Converting to Cupy's NDArray
 
-        for _ in range(self.epochs):
-            for index, data_row in enumerate(X_train):
-                # data_row = (1, D)
-                # weights = (Num_Classes, D)
-                y_pred = np.argmax(np.dot(data_row, self.w.T))
-    
-                # y_pred = 1
-                y_correct = y_train[index]
-                # print(f"Y_pred - {y_pred}, y_correct - {y_correct}")
-                if y_pred != y_correct:  # Wrong prediction
-                    # Update incorrect prediction w/ learnign rate.
-                    self.w[y_pred] -= self.lr * data_row
-                    # Update correct prediciton w/ learning rate.
-                    self.w[y_correct] += self.lr * data_row
-                else: 
-                    # If correct, (1- lr(lambda/N)) * Wc
-                    self.w[y_pred] = (1 - (self.lr * (self.reg_const / X_train.shape[0]))) * self.w[y_pred]
+        # Gradient descent with batches. 
+        for i in range(self.epochs):
+            mask_indicies = np.random.choice(X_train.shape[0], batch_size, replace = True)
 
+            X_batch, y_batch = X_train[mask_indicies], y_train[mask_indicies]
+
+            gradient = self.calc_gradient(X_batch, y_batch).T
+
+            self.w -= self.lr * gradient
         pass
 
     def predict(self, X_test: np.ndarray) -> np.ndarray:
