@@ -13,7 +13,7 @@ class Perceptron:
             lr: the learning rate
             epochs: the number of epochs to train for
         """
-        self.w = None  # TODO: change this
+        self.w = None  
         self.lr = lr
         self.epochs = epochs
         self.n_class = n_class
