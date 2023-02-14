@@ -21,17 +21,6 @@ class Perceptron:
     def train(self, X_train: np.ndarray, y_train: np.ndarray):
         """Train the classifier.
 
-        # https://www.python-engineer.com/courses/mlfromscratch/06_perceptron/
-        # https://medium.com/hackernoon/implementing-the-perceptron-algorithm-from-scratch-in-python-48be2d07b1c0
-
-        # Multiclass perceptron
-        # https://swayattadaw.medium.com/multiclass-perceptron-from-scratch-ed326fc34b8f
-        # https://www.codingame.com/playgrounds/9487/deep-learning-from-scratch---theory-and-implementation/perceptrons
-        # https://www.kaggle.com/code/alizahidraja/multiclass-perceptron
-        # https://jermwatt.github.io/machine_learning_refined/notes/7_Linear_multiclass_classification/7_3_Perceptron.html
-        # https://www.youtube.com/watch?v=EA627DC7k6M
-        Use the perceptron update rule as introduced in the Lecture.
-
         Parameters:
             X_train: a number array of shape (N, D) containing training data;
                 N examples with D dimensions
