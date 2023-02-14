@@ -35,49 +35,44 @@ class Softmax:
             gradient with respect to weights w; an array of same shape as w
         """
         # TODO: implement me
-        W = self.w.T
-        reg = self.reg_const
-        loss = 0
+        W = self.w.T # (D, n_classes)
+        cross_entropy_loss = 0
+        
         dW = np.zeros_like(W)
 
-        num_classes = W.shape[1]
-        num_train = X_train.shape[0]
-        for i in range(num_train):
-            scores = X_train[i].dot(W) # scores.shape is N x C
+        for row_index in range(X_train.shape[0]):
+            
+            # (N x D) * (D x N_Classes)
+            score_vectors = X_train[row_index].dot(W) #  N x N_Classes
 
-            # shift values for 'scores' for numeric reasons (over-flow cautious)
-            scores -= scores.max()
+            score_vectors -= score_vectors.max() # Prevent overflow
 
-            probs = np.exp(scores)/np.sum(np.exp(scores))
+            # Cross entropy calculation
+            probs = np.exp(score_vectors)/np.sum(np.exp(score_vectors))
 
-            loss += -np.log(probs[y_train[i]])
+            cross_entropy_loss += -np.log(probs[y_train[row_index]])
 
-            # since dL(i)/df(k) = p(k) - 1 (if k = y[i]), where f is a vector of scores for the given example
-            # i is the training sample and k is the class
-            dscores = probs.reshape(1,-1)
-            dscores[:, y_train[i]] -= 1
+            # Reshaping class scores into columns.
+            class_scores = probs.reshape(1,-1)
+            class_scores[:, y_train[row_index]] -= 1
 
-            # since scores = X.dot(W), iget dW by multiplying X.T and dscores
-            # W is D x C so dW should also match those dimensions
-            # X.T x dscores = (D x 1) x (1 x C) = D x C
-            dW += np.dot(X_train[i].T.reshape(X_train[i].shape[0], 1), dscores)
+            # (D x 1) x (1 x N_classes) = D x n_classes
+            dW += np.dot(X_train[row_index].T.reshape(X_train[row_index].shape[0], 1), class_scores)
 
-        # Right now the loss is a sum over all training examples, but we want it
-        # to be an average instead so we divide by num_train.
-        loss /= num_train
-        dW /= num_train
+        # 1/N, averages of loss and gradient. 
+        cross_entropy_loss /= X_train.shape[0]
+        dW /= X_train.shape[0]
 
-        # Add regularization to the loss.
-        loss += reg * np.sum(np.square(W))
+        # Regularization. 
+        cross_entropy_loss += self.reg_const * np.sum(np.square(W))
 
-        # Add regularization loss to the gradient
-        dW += 2 * reg * W    
+        # Add regularization loss for the gradient
+        dW += self.reg_const * W    
 
 
-        return dW
-        # return
+        return dW, cross_entropy_loss
 
-    def train(self, X_train: np.ndarray, y_train: np.ndarray, batch_size = 150):
+    def train(self, X_train: np.ndarray, y_train: np.ndarray, batch_size = 150, verbose = False):
         """Train the classifier.
 
         Hint: operate on mini-batches of data for SGD.
@@ -107,9 +102,12 @@ class Softmax:
 
             X_batch, y_batch = X_train[mask_indicies], y_train[mask_indicies]
 
-            gradient = self.calc_gradient(X_batch, y_batch).T
+            gradient, loss = self.calc_gradient(X_batch, y_batch).T
 
             self.w -= self.lr * gradient
+
+            if verbose: # If verbose = True, print the loss. 
+                print(f"Epoch - {i}, Cross Entropy Loss {loss}")
 
         return
 
@@ -125,9 +123,9 @@ class Softmax:
                 length N, where each element is an integer giving the predicted
                 class.
         """
-        # TODO: implement me
-        X_test = np.hstack((X_test, np.ones((X_test.shape[0], 1))))
+        X_test = np.hstack((X_test, np.ones((X_test.shape[0], 1)))) # Adding Bias vector
 
+        # Class classification.
         X_test_weights = np.dot(X_test, self.w.T)
 
         y_pred = [np.argmax(data_row) for data_row in X_test_weights]
