@@ -13,7 +13,7 @@ class Softmax:
             epochs: the number of epochs to train for
             reg_const: the regularization constant
         """
-        self.w = None  # TODO: change this
+        self.w = None  
         self.lr = lr
         self.epochs = epochs
         self.reg_const = reg_const
@@ -34,7 +34,6 @@ class Softmax:
         Returns:
             gradient with respect to weights w; an array of same shape as w
         """
-        # TODO: implement me
         W = self.w.T # (D, n_classes)
         cross_entropy_loss = 0
         
@@ -48,12 +47,12 @@ class Softmax:
             score_vectors -= score_vectors.max() # Prevent overflow
 
             # Cross entropy calculation
-            probs = np.exp(score_vectors)/np.sum(np.exp(score_vectors))
+            class_probs = np.exp(score_vectors)/np.sum(np.exp(score_vectors))
 
-            cross_entropy_loss += -np.log(probs[y_train[row_index]])
+            cross_entropy_loss += -np.log(class_probs[y_train[row_index]])
 
             # Reshaping class scores into columns.
-            class_scores = probs.reshape(1,-1)
+            class_scores = class_probs.reshape(1,-1)
             class_scores[:, y_train[row_index]] -= 1
 
             # (D x 1) x (1 x N_classes) = D x n_classes
