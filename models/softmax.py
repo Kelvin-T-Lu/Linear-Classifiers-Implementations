@@ -102,9 +102,9 @@ class Softmax:
 
             X_batch, y_batch = X_train[mask_indicies], y_train[mask_indicies]
 
-            gradient, loss = self.calc_gradient(X_batch, y_batch).T
+            gradient, loss = self.calc_gradient(X_batch, y_batch)
 
-            self.w -= self.lr * gradient
+            self.w -= self.lr * gradient.T
 
             if verbose: # If verbose = True, print the loss. 
                 print(f"Epoch - {i}, Cross Entropy Loss {loss}")
