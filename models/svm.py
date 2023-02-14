@@ -80,19 +80,6 @@ class SVM:
 
         Hint: operate on mini-batches of data for SGD.
 
-        # https://www.baeldung.com/cs/svm-multiclass-classification (Concept)
-        # https://medium.com/@arsh1207/svm-implementation-from-scratch-in-python-8cf61a882ca8
-        # https://ljvmiranda921.github.io/notebook/2017/02/11/multiclass-svm/
-        # https://cs231n.github.io/optimization-1/
-        # https://cs231n.github.io/linear-classify/
-        # https://towardsdatascience.com/svm-implementation-from-scratch-python-2db2fc52e5c2 
-        # https://github.com/qandeelabbassi/python-svm-sgd/blob/master/svm.py
-        # https://github.com/amanchadha/stanford-cs231n-assignments-2020/tree/master/assignment1/cs231n/classifiers
-        # https://github.com/ibayramli/Multiclass-SVM-Image-Classifier
-        # https://github.com/HuangYukun/columbia_cs_deep_learning_1/blob/master/ecbm4040/classifiers/linear_svm.py
-        # https://users.cs.utah.edu/~zhe/pdf/lec-19-2-svm-sgd-upload.pdf
-        
-
         Parameters:
             X_train: a numpy array of shape (N, D) containing training data;
                 N examples with D dimensions
