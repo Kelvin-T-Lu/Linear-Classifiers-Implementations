@@ -37,7 +37,7 @@ class SVM:
         """
 
         delta = 1 # Delta from CS231N Linear Classify
-        W = self.w.T # (Features, Class_label)
+        W = self.w.T # (D, n_classes)
 
         dW = np.zeros(W.shape) # Intial gradient.
 
