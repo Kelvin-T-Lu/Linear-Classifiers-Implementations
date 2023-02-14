@@ -110,7 +110,6 @@ class SVM:
         self.w = np.hstack((self.w, bias))  # Adding bias column.
         x_train_bias = np.ones((X_train.shape[0], 1))
         X_train = np.hstack((X_train, x_train_bias))
-        # X_train = np.asarray(X_train)  # Converting to Cupy's NDArray
 
         # Gradient descent with batches. 
         for i in range(self.epochs):
